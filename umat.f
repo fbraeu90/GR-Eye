@@ -151,11 +151,14 @@ C     Total tissue reference mass density
 C     Growth parameter [days^-1]
       k_sig = props(7)
 
+C     Growth parameter [days^-1]
+      growth_type = props(8)
+
 C     Half life time of collagen
-      T = props(8)
+      T = props(9)
 
 C     Homeostatic stretch 
-      lambdae_h = props(9)
+      lambdae_h = props(10)
 
 C=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 C                   Definition of State Variables
@@ -224,17 +227,24 @@ C      Fg =                                                x2k +
 C     *     ((statev(12)+statev(22)+statev(11))/Rho0_t0)**(one/two) * y2k + 
 C     *     ((statev(12)+statev(22)+statev(11))/Rho0_t0)**(one/two) * z2k
 
-C     Growth in thickness direction
-      Fg = I
-      Fg =                                     x2k +
-     *                                         y2k + 
-     *     ((statev(12)+statev(22)+statev(11))/Rho0_t0) * z2k
 
-C     No volumetric growth --> mass density growth
-C      Fg = I
-C      Fg(1,1) = one
-C      Fg(2,2) = one
-C      Fg(3,3) = one
+      if(growth_type.EQ.0) then
+
+C           Mass density growth
+            Fg = I
+            Fg(1,1) = one
+            Fg(2,2) = one
+            Fg(3,3) = one
+
+      else if(growth_type.EQ.1) then
+
+C           Growth in transmural direction
+            Fg = I
+            Fg =                                                x2k +
+     *                                                          y2k + 
+     *           ((statev(12)+statev(22)+statev(11))/Rho0_t0) * z2k
+
+      endif
 
 C=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 C                         Remodeling Tensor
