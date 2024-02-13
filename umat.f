@@ -151,7 +151,7 @@ C     Total tissue reference mass density
 C     Growth parameter [days^-1]
       k_sig = props(7)
 
-C     Growth parameter [days^-1]
+C     Growth type: 0 - mass density growth; 1 - transmural volumetric growth
       growth_type = props(8)
 
 C     Half life time of collagen
