@@ -2908,13 +2908,13 @@ c1_Sc = 50000.
 c3_Sc = 180000.
 ** Uncrimping rate of collagen fibers
 c4 = 11.
-** Reference mass density of elastin
+** Reference mass density of the ground matrix
 Rho0_t0_m = 500.
 ** Total reference mass density of collagen
 Rho0_t0_f = 500.
 ** Growth parameter
 k_sig = 0.00002
-** Growth type: 0 - mass density growth; 1 - anisotropic volumetric growth in thickness direction
+** Growth type: 0 - mass density growth; 1 - transmural volumetric growth
 growth_type = 1
 ** Half life time of collagen
 T=100.
