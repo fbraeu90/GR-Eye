@@ -1,4 +1,4 @@
-# 3D Growth & Remodeling of Soft Biological Tissues - Homogenized Constrained Mixture Model
+# 3D Homogenized Constrained Mixture Model for Eye Growth and Remodeling - A Model of Staphyloma Formation
 
 The homogenized constrained mixture model is implemented in **Abaqus** through a coupled **User-defined MATerial subroutine ([UMAT](https://classes.engineering.wustl.edu/2009/spring/mase5513/abaqus/docs/v6.6/books/sub/default.htm?startat=ch01s01asb31.html))**. This computational model facilitates the simulation of various Growth & Remodeling (G&R) processes in soft biological tissues within the body. Originally designed for aneurysm growth simulations ([Braeu et al. 2017](https://pubmed.ncbi.nlm.nih.gov/27921189/) and [Braeu et al. 2018](https://pubmed.ncbi.nlm.nih.gov/30413985/)), it has been adapted for cardiac G&R ([Amadeus et al. 2023](https://link.springer.com/article/10.1007/s10237-023-01747-w)).
 
