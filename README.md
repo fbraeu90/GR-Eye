@@ -16,7 +16,7 @@ Note: Replace "X" with the scenario number you wish to execute.
 For further details and a derivation of the equations, please refer to our publication: [Braeu et al. 2024](LINK TO ARXIV ARTICLE).
 <br/><br/>
 <p align="center">
-  <img src="https://github.com/fbraeu90/GR-Eye/assets/142971506/67b54640-57ba-48a8-9697-ff64b10d2965" width="700">
+  <img src="https://github.com/fbraeu90/GR-Eye/assets/142971506/87bf1850-583d-4e27-8685-b1d6963125d1" width="700">
 </p>
 <em>
   Left column: Final shape of the posterior pole of the eye after 13.7 years of G&R. (1), (2), and (3) refer to the simulated G&R scenarios. Right column: Maximum growth stimulus (i.e. the difference between collagen fiber stress and homeostatic stress normalized w.r.t. the homeostatic stress) in the PPS over a time span of 13.7 years. 
