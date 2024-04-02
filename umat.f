@@ -12,7 +12,7 @@ C=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
             real(8) :: buffer_r
             integer(8) :: buffer_i
 
-C Note: In case you remesh your geometry, please update the following parameters
+C Note: In case you remesh your geometry, please update the following variables
             integer, parameter :: nnodes    = 1668
             integer, parameter :: nhexelements = 900
             integer, parameter :: nwedgeelements = 30
@@ -151,7 +151,7 @@ C     Total tissue reference mass density
 C     Growth parameter [days^-1]
       k_sig = props(7)
 
-C     Growth type: 0 - mass density growth; 1 - transmural volumetric growth
+C     Growth parameter [days^-1]
       growth_type = props(8)
 
 C     Half life time of collagen
@@ -170,17 +170,13 @@ C     13 -> Mass density (matrix) in the current configuration
 C     14, 24, ... -> Mass density (fiber) in the current configuration (first digit is the fiber number)
 C     15 -> J
 C     16, 26, ... -> Remodeling stretch
-C     17, 27, ... -> Single fiber stress
-C     18, 28, ... -> Homeostatic fiber stress
-C     19, 29, ... -> Fiber prestretch 
+C     18, 28, ... -> Constant homeostatic fiber stress contribution
+C     19, 29, ... -> Fiber prestretch
+C     31, 61, ... -> Cauchy fiber stress 
+C     32, 62, ... -> Current homeostatic stress
+C     63 -> Total current mass density
 C     33 -> Shear stiffness (matrix)
 
-C     This is used for display purposes in abaqus cae
-      statev(13) = statev(11)/J
-      do kf=1,2
-            statev(kf*10+4) = statev(kf*10+2)/J
-      enddo
-      statev(15) = J
 
 C=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 C                        Initialization Step
@@ -238,7 +234,7 @@ C           Mass density growth
 
       else if(growth_type.EQ.1) then
 
-C           Growth in transmural direction
+C           Growth in thickness direction
             Fg = I
             Fg =                                                x2k +
      *                                                          y2k + 
@@ -272,6 +268,16 @@ C=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 C     Deformation gradient tensor
       F = DFGRD1
       call determinant(F,J)
+
+C     This is used for display purposes in abaqus cae
+      statev(13) = statev(11)/J
+      do kf=1,2
+            statev(kf*10+4) = statev(kf*10+2)/J
+      enddo
+      statev(15) = J
+
+C     Total current mass density
+      statev(63) = (statev(12)+statev(22)+statev(11))/J
 
 C     Matrix elastic deformation gradient (note: Fr = 1 for the matrix) 
       call MatrixInverse(Fg,Fg_inverse)
@@ -386,18 +392,17 @@ C     -=-=-=-= No resistance to compression -=-=-=-=-=-=-=-=-=-=-=-=-=-=
             enddo
 
 C------------------------------------------------------------------------
-C     Local Cauchy stress along the fiber (fiber stress divided by the 
-C.    current fiber mass density, hence no J!)
+C     Fiber Cauchy stress along the respective fiber direction
 C------------------------------------------------------------------------
-            statev(kf*10+7) = two*I4e(kf)*W4e(kf)
-
+            statev(kf*30+1) = statev(kf*10+2)/J*two*I4e(kf)*W4e(kf)
+            statev(kf*30+2) = statev(kf*10+2)/J*statev(kf*10+8)
 C-----------------------------------------------------------------------
-C     The homeostatic fiber stress is constant and is saved after the
-C     second step in which we apply pre-strech. The pre-stretch is
-C     equal to the homeostatic stretch defined in the input file.
+C     We save the constant contribution to the homeostatic fiber stress
+C     after the second step in which we apply pre-strech. The pre-stretch
+C     is equal to the homeostatic stretch defined in the input file.
 C-----------------------------------------------------------------------
             if(KSTEP.EQ.2) then
-                  statev(kf*10+8) = statev(kf*10+7)
+                  statev(kf*10+8) = two*I4e(kf)*W4e(kf)
             endif       
       enddo
       
@@ -511,11 +516,12 @@ C     Growth is activated at step 4 through this evolution equation
                   else if (lambdae(kf).GT.one) then
                         Rho0_f(kf) = statev(kf*10+2)
                         Rho0_f_dot(kf) = Rho0_f(kf)*k_sig 
-     *                                * ( statev(kf*10+7) - statev(kf*10+8) ) / statev(kf*10+8)
+     *                                * ( statev(kf*30+1) - statev(kf*30+2) ) / statev(kf*30+2)
                         statev(kf*10+2) = Rho0_f(kf) + DTIME*Rho0_f_dot(kf)
                   endif
             enddo
       endif
+
 
 C=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 C                         Remodeling Evolution
@@ -533,8 +539,8 @@ C     Remodeling is activated at step 4 through this evolution equation
                         statev(kf*10+6) = statev(kf*10+6) + DTIME*(
      *                  (Rho0_f_dot(kf)/Rho0_f(kf)+one/T)
      *                  * statev(kf*10+6)/lambdae(kf)
-     *                  * (Wle(kf)+lambdae(kf)*Wlle(kf))**(-one)
-     *                  * ( statev(kf*10+7) - statev(kf*10+8) )
+     *                  * (statev(kf*10+2)/J*(Wle(kf)+lambdae(kf)*Wlle(kf)))**(-one)
+     *                  * ( statev(kf*30+1) - statev(kf*30+2) )
      *                                          )
                   endif
             enddo
