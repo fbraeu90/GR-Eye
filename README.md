@@ -13,7 +13,7 @@ To run the different scenarios via the console, use the following Abaqus command
 
 Note: Replace "X" with the scenario number you wish to execute.
 
-For further details and a derivation of the equations, please refer to our preprint: [Braeu et al. 2024](https://arxiv.org/abs/2404.03330).
+For further details and a derivation of the equations, please refer to our publication: [Braeu et al. 2024](https://link.springer.com/article/10.1007/s10237-024-01885-9#:~:text=In%20this%20study%2C%20we%20used,under%20normal%20levels%20of%20IOP).
 <br/><br/>
 <p align="center">
   <img src="https://github.com/fbraeu90/GR-Eye/assets/142971506/87bf1850-583d-4e27-8685-b1d6963125d1" width="700">
